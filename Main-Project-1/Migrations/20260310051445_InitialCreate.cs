@@ -73,13 +73,12 @@ namespace Main_Project_1.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     HomeId = table.Column<int>(type: "int", nullable: false),
-                    TypeId = table.Column<int>(type: "int", nullable: false),
+                    ApplianceTypeId = table.Column<int>(type: "int", nullable: false),
                     DeviceIdentifier = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Model = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    InstalledAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ApplianceTypeId = table.Column<int>(type: "int", nullable: false)
+                    InstalledAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

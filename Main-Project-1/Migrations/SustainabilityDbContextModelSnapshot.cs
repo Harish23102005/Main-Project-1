@@ -91,9 +91,6 @@ namespace Main_Project_1.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TypeId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ApplianceTypeId");
@@ -351,7 +348,7 @@ namespace Main_Project_1.Migrations
             modelBuilder.Entity("Alert", b =>
                 {
                     b.HasOne("Appliance", "Appliance")
-                        .WithMany("Alerts")
+                        .WithMany()
                         .HasForeignKey("ApplianceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -381,7 +378,7 @@ namespace Main_Project_1.Migrations
             modelBuilder.Entity("EnergyUsage", b =>
                 {
                     b.HasOne("Appliance", "Appliance")
-                        .WithMany("EnergyUsages")
+                        .WithMany()
                         .HasForeignKey("ApplianceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -422,7 +419,7 @@ namespace Main_Project_1.Migrations
             modelBuilder.Entity("SensorData", b =>
                 {
                     b.HasOne("Appliance", "Appliance")
-                        .WithMany("SensorData")
+                        .WithMany()
                         .HasForeignKey("ApplianceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -444,7 +441,7 @@ namespace Main_Project_1.Migrations
             modelBuilder.Entity("WaterUsage", b =>
                 {
                     b.HasOne("Appliance", "Appliance")
-                        .WithMany("WaterUsages")
+                        .WithMany()
                         .HasForeignKey("ApplianceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -455,17 +452,6 @@ namespace Main_Project_1.Migrations
             modelBuilder.Entity("Alert", b =>
                 {
                     b.Navigation("Notifications");
-                });
-
-            modelBuilder.Entity("Appliance", b =>
-                {
-                    b.Navigation("Alerts");
-
-                    b.Navigation("EnergyUsages");
-
-                    b.Navigation("SensorData");
-
-                    b.Navigation("WaterUsages");
                 });
 
             modelBuilder.Entity("ApplianceType", b =>

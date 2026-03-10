@@ -4,7 +4,7 @@
 
     public int HomeId { get; set; }
 
-    public int TypeId { get; set; }
+    public int ApplianceTypeId { get; set; }   // ← IMPORTANT FIX
 
     public string DeviceIdentifier { get; set; }
 
@@ -19,12 +19,4 @@
     public Home Home { get; set; }
 
     public ApplianceType ApplianceType { get; set; }
-
-    public ICollection<SensorData> SensorData { get; set; }
-
-    public ICollection<EnergyUsage> EnergyUsages { get; set; }
-
-    public ICollection<WaterUsage> WaterUsages { get; set; }
-
-    public ICollection<Alert> Alerts { get; set; }
 }

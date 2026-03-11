@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MainProject1.DTOs;
 
 namespace MainProject1.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("water")]
     public class WaterController : ControllerBase

@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MainProject1.DTOs;
 
 namespace MainProject1.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("appliances")]
     public class AppliancesController : ControllerBase
@@ -23,6 +25,13 @@ namespace MainProject1.Controllers
         [HttpPost]
         public IActionResult Create(CreateApplianceDto dto)
         {
+            // Validate FK references exist to prevent DbUpdateException
+            if (!_context.Homes.Any(h => h.Id == dto.HomeId))
+                return BadRequest($"Home with Id={dto.HomeId} does not exist.");
+
+            if (!_context.ApplianceTypes.Any(t => t.Id == dto.TypeId))
+                return BadRequest($"ApplianceType with Id={dto.TypeId} does not exist.");
+
             var appliance = new Appliance
             {
                 HomeId = dto.HomeId,
@@ -37,7 +46,17 @@ namespace MainProject1.Controllers
             _context.Appliances.Add(appliance);
             _context.SaveChanges();
 
-            return Ok(appliance);
+            return Ok(new
+            {
+                appliance.Id,
+                appliance.HomeId,
+                applianceTypeId = appliance.ApplianceTypeId,
+                appliance.DeviceIdentifier,
+                appliance.Name,
+                appliance.Model,
+                appliance.Status,
+                appliance.InstalledAt
+            });
         }
 
         [HttpGet("{id}")]
@@ -61,6 +80,27 @@ namespace MainProject1.Controllers
             _context.SaveChanges();
 
             return Ok();
+        }
+
+        public class UpdateStatusDto
+        {
+            public string Status { get; set; } = "";
+        }
+
+        [HttpPatch("{id}/status")]
+        public IActionResult UpdateStatus(int id, [FromBody] UpdateStatusDto dto)
+        {
+            var allowed = new[] { "Active", "Inactive", "Maintenance" };
+            if (!allowed.Contains(dto.Status))
+                return BadRequest("Invalid status. Allowed: Active, Inactive, Maintenance.");
+
+            var appliance = _context.Appliances.Find(id);
+            if (appliance == null) return NotFound();
+
+            appliance.Status = dto.Status;
+            _context.SaveChanges();
+
+            return Ok(appliance);
         }
     }
 }

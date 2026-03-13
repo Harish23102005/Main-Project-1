@@ -16,10 +16,22 @@ builder.Services.AddSwaggerGen();
 
 // Register DbContext
 builder.Services.AddDbContext<SustainabilityDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    )
-);
+{
+    if (builder.Environment.IsDevelopment())
+    {
+        // Local development → SQL Server
+        options.UseSqlServer(
+            builder.Configuration.GetConnectionString("SqlServerConnection")
+        );
+    }
+    else
+    {
+        // Production (Render) → Supabase PostgreSQL
+        options.UseNpgsql(
+            builder.Configuration.GetConnectionString("PostgresConnection")
+        );
+    }
+});
 
 // JWT Authentication
 var jwtSection = builder.Configuration.GetSection("Jwt");

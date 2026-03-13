@@ -16,22 +16,10 @@ builder.Services.AddSwaggerGen();
 
 // Register DbContext
 builder.Services.AddDbContext<SustainabilityDbContext>(options =>
-{
-    if (builder.Environment.IsDevelopment())
-    {
-        // Local development → SQL Server
-        options.UseSqlServer(
-            builder.Configuration.GetConnectionString("SqlServerConnection")
-        );
-    }
-    else
-    {
-        // Production (Render) → Supabase PostgreSQL
-        options.UseNpgsql(
-            builder.Configuration.GetConnectionString("PostgresConnection")
-        );
-    }
-});
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection")
+    )
+);
 
 // JWT Authentication
 var jwtSection = builder.Configuration.GetSection("Jwt");
@@ -134,9 +122,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAngular");
+// Only enable HTTPS redirection in Development (skip in Production behind Render)
+if (app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
-app.UseHttpsRedirection();
+app.UseCors("AllowAngular");
 
 app.UseAuthentication();   // ← must come before UseAuthorization
 app.UseAuthorization();

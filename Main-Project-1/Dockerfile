@@ -18,6 +18,11 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app/publish .
 
+# Optional: set globalization invariant for smaller images if needed
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true
+
+# Informational only
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "Main-Project-1.dll"]
+# Use shell form so $PORT is expanded at runtime (Render sets PORT env var)
+ENTRYPOINT ["sh","-c","dotnet Main-Project-1.dll --urls http://0.0.0.0:${PORT:-8080}"]

@@ -4,21 +4,54 @@ using Microsoft.IdentityModel.Tokens;
 using MainProject1;
 using MainProject1.Helpers;
 using System.Text;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "SmartHome API",
+        Version = "v1"
+    });
+
+    // JWT Authentication for Swagger
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter token like: Bearer {your JWT token}"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 
 // Register DbContext
 builder.Services.AddDbContext<SustainabilityDbContext>(options =>
-    options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection")
-    )
+    options.UseSqlServer(
+    builder.Configuration.GetConnectionString("DefaultConnection")
+)
 );
 
 // JWT Authentication
@@ -116,11 +149,10 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure HTTP pipeline
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+
 
 // Only enable HTTPS redirection in Development (skip in Production behind Render)
 if (app.Environment.IsDevelopment())
